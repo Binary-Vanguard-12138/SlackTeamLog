@@ -44,6 +44,7 @@ export class SlackTeamService {
                 // Initialize CSV headers
                 csv_headers = Object.keys(respData.logins[0]);
                 stream.push(csv_headers.join(',')); // header row first
+                stream.push('\r\n');
             }
             stream.push(json2csv(respData.logins, csv_headers));
             total_count += respData.logins.length;

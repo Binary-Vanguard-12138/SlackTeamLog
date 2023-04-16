@@ -27,7 +27,7 @@ export class SlackTeamController {
         stream._read = () => { };
         // Send the data as a file stream
         response.setHeader('Content-Type', 'application/octet-stream');
-        response.setHeader('Content-Disposition', 'attachment; filename="accessLogs.txt"');
+        response.setHeader('Content-Disposition', 'attachment; filename="accessLogs.csv"');
         stream.pipe(response);
         await this.slackTeamService.getAccessLogs(authHeader, stream);
     }
