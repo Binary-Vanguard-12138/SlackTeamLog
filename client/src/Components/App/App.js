@@ -36,7 +36,7 @@ function App({ data, filename, loading, error }) {
       <Typography py={2}>Please input your user token for Slack application</Typography>
       <TextField py={2} label="Token" value={token} onChange={e => { setToken(e.target.value) }} />
       <Typography />
-      <Button sx={{ my: 2 }} variant="contained" color="primary" onClick={handleClickSaveButton} >
+      <Button sx={{ my: 2 }} variant="contained" color="primary" onClick={handleClickSaveButton} disabled={loading} >
         Save
       </Button>
       {filename ? (<Typography>File has been saved to {filename}</Typography>) : (<></>)}

@@ -33,11 +33,11 @@ const initialState = {
 export default function slackTeamReducer(state = initialState, action) {
     switch (action.type) {
         case SET_SLACK_TEAM_ACCESSLOGS:
-            return action.payload;
+            return { ...state, data: action.payload.data, filename: action.payload.filename, error: null, loading: false };
         case SET_ERROR_SLACK_TEAM_ACCESSLOGS:
-            return action.payload;
+            return { ...state, error: action.payload };
         case SET_LOADING_SLACK_TEAM_ACCESSLOGS:
-            return action.payload;
+            return { ...state, loading: action.payload };
         default:
             return state;
     }
