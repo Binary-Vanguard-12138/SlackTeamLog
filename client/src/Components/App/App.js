@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from "react-redux";
-import { Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import { downloadSlackTeamAccessLogs } from '../../redux/actions/slackTeamAction';
 import { connect } from "react-redux";
 
@@ -10,9 +10,14 @@ import { setSlackTeamAccessLogs } from '../../redux/reducers/slackTeamReducer';
 function App({ data, filename, loading, error }) {
   const dispatch = useDispatch();
   const [token, setToken] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileSelect = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
 
   const handleClickSaveButton = async (event) => {
-    dispatch(downloadSlackTeamAccessLogs(token));
+    dispatch(downloadSlackTeamAccessLogs(token, selectedFile));
   }
 
   useEffect(() => {
@@ -31,16 +36,39 @@ function App({ data, filename, loading, error }) {
   }, [dispatch, data, filename, loading]);
 
   return (
-    <div className="App">
-      <Typography variant='h3' py={4}>Slack Team Access Log Downloader</Typography>
-      <Typography py={2}>Please input your user token for Slack application</Typography>
-      <TextField py={2} label="Token" value={token} onChange={e => { setToken(e.target.value) }} />
-      <Typography />
-      <Button sx={{ my: 2 }} variant="contained" color="primary" onClick={handleClickSaveButton} disabled={loading} >
-        Save
-      </Button>
-      {filename ? (<Typography>File has been saved to {filename}</Typography>) : (<></>)}
-      {error ? (<Typography color={"error"}>{error}</Typography>) : (<></>)}
+    <div className="App" >
+      <Box maxWidth={900}>
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <Typography variant='h3' py={4}>Slack Team Access Log Downloader</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography py={2}>Please input your user token for Slack application</Typography>
+          </Grid>
+          <Grid item xs={12} sx={{ maxWidth: "600px" }}>
+            <TextField py={2} label="Token" value={token} onChange={e => { setToken(e.target.value) }} fullWidth />
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={1} display={"flex"} alignItems={"center"}>
+              <Grid item xs={8}>
+                <Typography py={2}>Please select the CSV file containing User IDs</Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <input type="file" onChange={handleFileSelect} />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Button sx={{ my: 2 }} variant="contained" color="primary" onClick={handleClickSaveButton} disabled={loading} >
+              Save
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            {filename ? (<Typography>File has been saved to {filename}</Typography>) : (<></>)}
+            {error ? (<Typography color={"error"}>{error}</Typography>) : (<></>)}
+          </Grid>
+        </Grid>
+      </Box>
     </div>
   );
 }

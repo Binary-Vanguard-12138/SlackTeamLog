@@ -1,11 +1,20 @@
 import axios from "axios";
 
 class ApiSlackTeamService {
-    async getSlackTeamAccessLogsData(token) {
+    async getSlackTeamAccessLogsData(token, selectedFile) {
         // Call the backend API
-        const response = await axios.get("api/slack/teams/accessLogs", {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        let response;
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            response = await axios.post("api/slack/teams/accessLogsByUserId", formData, {
+                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+            });
+        } else {
+            response = await axios.get("api/slack/teams/accessLogs", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+        }
 
 
         const contentDisposition = response.headers["content-disposition"];
