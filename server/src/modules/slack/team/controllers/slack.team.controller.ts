@@ -11,10 +11,14 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Readable } from 'stream';
 import { SlackTeamService } from '../services/slack.team.service';
+import * as fs from 'fs';
+
+const FILE_NAME_ACCESS_LOGS = 'accessLogs.csv';
+const FILE_NAME_ACCESS_LOGS_BY_USER_ID = 'accessLogsByUserId.csv';
 
 @Controller('api/slack/teams')
 @ApiTags('api/slack/teams')
@@ -33,6 +37,7 @@ export class SlackTeamController {
     @Response() response,
   ) {
     const authHeader = headers.authorization;
+    const fileStream = fs.createWriteStream(FILE_NAME_ACCESS_LOGS);
     const stream = new Readable();
     let maxPage = 0;
     if (queryParams && 'maxPage' in queryParams) {
@@ -44,9 +49,10 @@ export class SlackTeamController {
     response.setHeader('Content-Type', 'application/octet-stream');
     response.setHeader(
       'Content-Disposition',
-      'attachment; filename="accessLogs.csv"',
+      `attachment; filename="${FILE_NAME_ACCESS_LOGS}"`,
     );
     stream.pipe(response);
+    stream.pipe(fileStream);
     await this.slackTeamService.getAccessLogs(authHeader, maxPage, stream);
   }
 
@@ -65,19 +71,21 @@ export class SlackTeamController {
   ) {
     const authHeader = headers.authorization;
     const stream = new Readable();
+    const fileStream = fs.createWriteStream(FILE_NAME_ACCESS_LOGS_BY_USER_ID);
     const maxPage = 0 < body.maxPage ? body.maxPage : 0;
     const userIds = file.buffer
       .toString('utf-8')
-      .split(',')
+      .split(/\r?\n|,/)
       .map((uid: string) => uid.trim());
     stream._read = () => {};
     // Send the data as a file stream
     response.setHeader('Content-Type', 'application/octet-stream');
     response.setHeader(
       'Content-Disposition',
-      'attachment; filename="accessLogsByUserId.csv"',
+      `attachment; filename="${FILE_NAME_ACCESS_LOGS_BY_USER_ID}"`,
     );
     stream.pipe(response);
+    stream.pipe(fileStream);
     await this.slackTeamService.getAccessLogsByUserId(
       authHeader,
       userIds,
