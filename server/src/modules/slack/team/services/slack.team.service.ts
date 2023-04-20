@@ -1,10 +1,10 @@
 import {
-    BadRequestException,
-    InternalServerErrorException,
-    Injectable
+  BadRequestException,
+  InternalServerErrorException,
+  Injectable,
 } from '@nestjs/common';
-import { Readable } from "stream";
-import axios, { AxiosResponse } from "axios";
+import { Readable } from 'stream';
+import axios, { AxiosResponse } from 'axios';
 import { json2csv } from '../../../../utils/json2csv';
 import { TeamAccessLog } from '../../../../types/slack/team/accessLog';
 
@@ -34,7 +34,7 @@ export class SlackTeamService {
           headers,
           params: {
             limit: LIMIT_PER_CURSOR,
-            next_cursor,
+            cursor: next_cursor,
           },
         });
       } catch (error) {
@@ -97,7 +97,7 @@ export class SlackTeamService {
           headers,
           params: {
             limit: LIMIT_PER_CURSOR,
-            next_cursor,
+            cursor: next_cursor,
           },
         });
       } catch (error) {
@@ -140,4 +140,3 @@ export class SlackTeamService {
     return stream;
   }
 }
-
