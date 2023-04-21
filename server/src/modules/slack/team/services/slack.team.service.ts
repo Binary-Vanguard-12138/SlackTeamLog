@@ -89,7 +89,7 @@ export class SlackTeamService {
     for (const userId of userIds) {
       userIdMap.set(userId, false);
     }
-    const targetUserIdNumber = Object.keys(userIdMap).length;
+    const targetUserIdNumber = userIdMap.size;
 
     let retrievedUserCount = 0;
 

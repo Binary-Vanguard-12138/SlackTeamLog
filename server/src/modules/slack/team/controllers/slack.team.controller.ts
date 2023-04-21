@@ -54,7 +54,7 @@ export class SlackTeamController {
     stream.pipe(response);
     stream.pipe(fileStream);
     await this.slackTeamService.getAccessLogs(authHeader, maxPage, stream);
-    fileStream.close();
+    // fileStream.close();
   }
 
   @Post('/accessLogsByUserId')
@@ -93,6 +93,6 @@ export class SlackTeamController {
       maxPage,
       stream,
     );
-    fileStream.close();
+    // fileStream.close();
   }
 }
