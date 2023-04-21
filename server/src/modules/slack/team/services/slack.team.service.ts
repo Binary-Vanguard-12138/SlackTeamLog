@@ -87,8 +87,10 @@ export class SlackTeamService {
     const userIdMap = new Map();
 
     for (const userId of userIds) {
-      userIdMap.set(userId, true);
+      userIdMap.set(userId, false);
     }
+    const targetUserIdNumber = Object.keys(userIdMap).length;
+
     let retrievedUserCount = 0;
 
     while (true) {
@@ -115,24 +117,40 @@ export class SlackTeamService {
         stream.push(csv_headers.join(',')); // header row first
         stream.push('\r\n');
       }
-      const filtered_logins = respData.logins.filter(
-        (accessLog: TeamAccessLog) => {
-          return userIdMap.get(accessLog.user_id);
-        },
-      );
+
+      const filtered_logins = [];
+      for (let i = 0; i < respData.logins.length; i++) {
+        const accessLog: TeamAccessLog = respData.logins[i];
+        const user_id = accessLog.user_id;
+        if (!userIdMap.has(user_id)) {
+          continue;
+        }
+        if (userIdMap.get(user_id) === true) {
+          continue;
+        }
+        filtered_logins.push(accessLog);
+        userIdMap.set(user_id, true);
+        retrievedUserCount += 1;
+        if (retrievedUserCount >= targetUserIdNumber) {
+          break;
+        }
+      }
       stream.push(json2csv(filtered_logins, csv_headers));
-      retrievedUserCount += filtered_logins.length;
       total_count += respData.logins.length;
       page++;
       console.log(
         `Scraped ${total_count} logs, Get ${retrievedUserCount} logs in ${page} pages.`,
       );
-      next_cursor = respData.response_metadata.next_cursor;
-      if (!next_cursor || retrievedUserCount >= userIds.length) {
+      if (retrievedUserCount >= targetUserIdNumber) {
         break;
       }
 
       if (0 < maxPage && page > maxPage) {
+        break;
+      }
+
+      next_cursor = respData.response_metadata.next_cursor;
+      if (!next_cursor) {
         break;
       }
     }
