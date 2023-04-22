@@ -90,6 +90,7 @@ export class SlackTeamService {
       userIdMap.set(userId, false);
     }
     const targetUserIdNumber = userIdMap.size;
+    console.log(`Input ${targetUserIdNumber} user IDs`);
 
     let retrievedUserCount = 0;
 
@@ -136,6 +137,7 @@ export class SlackTeamService {
         }
       }
       stream.push(json2csv(filtered_logins, csv_headers));
+      stream.push('\r\n');
       total_count += respData.logins.length;
       page++;
       console.log(
