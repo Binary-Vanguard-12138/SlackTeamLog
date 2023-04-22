@@ -53,6 +53,7 @@ export class SlackTeamService {
         stream.push('\r\n');
       }
       stream.push(json2csv(respData.logins, csv_headers));
+      stream.push('\r\n');
       total_count += respData.logins.length;
       console.log(`Scraped ${total_count} logins in ${page} pages`);
       page++;
