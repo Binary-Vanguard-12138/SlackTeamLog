@@ -17,7 +17,7 @@ import { Readable } from 'stream';
 import { SlackTeamService } from '../services/slack.team.service';
 import * as fs from 'fs';
 
-const FILE_NAME_ACCESS_LOGS = 'accessLogs.csv';
+export const FILE_NAME_ACCESS_LOGS = 'accessLogs.csv';
 const FILE_NAME_ACCESS_LOGS_BY_USER_ID = 'accessLogsByUserId.csv';
 
 @Controller('api/slack/teams')
