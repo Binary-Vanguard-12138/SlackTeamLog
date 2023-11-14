@@ -25,7 +25,7 @@ describe('SlackTeamController', () => {
       const maxPage = 1;
       const response = {
         setHeader: jest.fn(),
-        status: jest.fn(),
+        // status: jest.fn(),
       };
       const stream = new Readable();
       const mockServiceResponse = "Mocked access logs";
